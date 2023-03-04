@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const WashingMachine = require('../models/WashingMachine');
+const WashingMachineSensor = require('../models/WashingMachineSensor');
 
 router.post('/', async function(req, res, next) {
   const errorMessages = [];
@@ -78,5 +79,52 @@ router.get('/:uid', async function(req, res, next) {
     res.status(422).json({ message: 'error', error: error.toString() })
   }
 });
+
+
+router.post('/sensor', async function(req, res, next) {
+  const errorMessages = [];
+
+  const { 
+    washingMachineNickName, 
+    sensorPurpose, 
+    sensorSectionName, 
+    sensorMacAddress, 
+    isSwitchedOn, 
+    washingMachineId
+  } = req.body;
+
+  if (!washingMachineNickName) {
+    errorMessages.push({ 'washingMachineNickName': 'Must provide a nick name for washing machine'});
+  } if (!sensorPurpose) {
+    errorMessages.push({ 'sensorPurpose': 'Must provide a purpose for adding sensor'});
+  } if (!sensorSectionName) {
+    errorMessages.push({ 'sensorSectionName': 'Must provide a sensor section name'});
+  } if (!sensorMacAddress) {
+    errorMessages.push({ 'sensorMacAddress': 'Must provide a sensor MAC address'});
+  } if (!isSwitchedOn) {
+    errorMessages.push({ 'isSwitchedOn': 'Must provide a bolean value for switch'});
+  } if (!washingMachineId) {
+    errorMessages.push({ 'washingMachineId': 'Must provide a washing machine ID'});
+  } 
+
+  if (errorMessages.length > 0) {
+    return res.status(420).json({ message: 'error', errorMessages });
+  }
+
+  try {
+    const wms = await WashingMachineSensor.create({ 
+      washingMachineNickName, 
+      sensorPurpose, 
+      sensorSectionName, 
+      sensorMacAddress, 
+      isSwitchedOn, 
+      washingMachineId
+    });
+    res.status(200).json({ message: 'success', washingMachineSensor: wms });
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() })
+  }
+});
+
 
 module.exports = router;
