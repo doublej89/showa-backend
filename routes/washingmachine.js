@@ -31,7 +31,7 @@ router.post('/', async function(req, res, next) {
   } if (!model) {
     errorMessages.push({ 'model': 'Must provide a model'});
   } if (!status) {
-    errorMessages.push({ 'uuid': 'Must provide status'});
+    errorMessages.push({ 'status': 'Must provide status'});
   }
 
   if (errorMessages.length > 0) {
