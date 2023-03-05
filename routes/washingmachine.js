@@ -80,6 +80,37 @@ router.get('/:uid', async function(req, res, next) {
   }
 });
 
+router.get('/:uid/sensor', async function(req, res, next) {
+  if (!req.params.uid) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
+  }
+  try {
+    const allSensors = [];
+    const wmachines = await WashingMachine.find({ uid: req.params.uid });
+
+    for (const wm of wmachines) {
+      const sensors = await WashingMachineSensor.find({ washingMachineId: wm._id });
+      allSensors.push(...sensors);
+    }
+    res.status(200).json({ 
+      message: 'success', 
+      sensors: allSensors.map((sensor) => (
+        {
+          id: sensor._id,
+          washingMachineNickName: sensor.washingMachineNickName, 
+          sensorPurpose: sensor.sensorPurpose, 
+          sensorSectionName: sensor.sensorSectionName, 
+          sensorMacAddress: sensor.sensorMacAddress, 
+          isSwitchedOn: sensor.isSwitchedOn, 
+          washingMachineId: sensor.washingMachineId
+        }
+      )) 
+    });
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() });
+  }
+});
+
 
 router.post('/sensor', async function(req, res, next) {
   const errorMessages = [];
@@ -133,9 +164,9 @@ router.put('/:id/run', async function(req, res, next) {
   try {
     const wm = await WashingMachine.findById(req.params.id);
     if (!wm) {
-      return res.status(422).json({ message: 'error', errorMessage: 'Wshing machine with the given id do not exist' });
+      return res.status(422).json({ message: 'error', errorMessage: 'Washing machine with the given id do not exist' });
     }
-    wm.status = 'running';
+    wm.status = 'Running';
     const newwm = await wm.save();
     res.status(200).json({ message: 'success', washingMachine: newwm });
   } catch (error) {
