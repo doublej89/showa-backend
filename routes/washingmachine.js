@@ -95,12 +95,12 @@ router.get('/:uid/sensor', async function(req, res, next) {
   }
   try {
     const allSensors = [];
-    const wmachines = await WashingMachine.find({ uid: req.params.uid });
+    const wmachines = await WashingMachine.find({ uid: req.params.uid }).populate('sensors').exec();
 
     for (const wm of wmachines) {
-      const sensors = await WashingMachineSensor.find({ washingMachineId: wm._id });
-      allSensors.push(...sensors);
+      allSensors.push(...wm.sensors);
     }
+    
     res.status(200).json({ 
       message: 'success', 
       sensors: allSensors.map((sensor) => (
@@ -160,6 +160,9 @@ router.post('/sensor', async function(req, res, next) {
       isSwitchedOn, 
       washingMachineId
     });
+    const wm = await WashingMachine.findById(wms.washingMachineId);
+    wm.sensors.push(wms._id);
+    await wm.save();
     res.status(200).json({ message: 'success', washingMachineSensor: wms });
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() })
