@@ -80,6 +80,15 @@ router.get('/:uid', async function(req, res, next) {
   }
 });
 
+router.delete('/', async function(req, res, next) {
+  try {
+    const wmachines = await WashingMachine.deleteMany();
+    res.status(200).json(wmachines);
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() })
+  }
+});
+
 router.get('/:uid/sensor', async function(req, res, next) {
   if (!req.params.uid) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
@@ -132,7 +141,7 @@ router.post('/sensor', async function(req, res, next) {
     errorMessages.push({ 'sensorSectionName': 'Must provide a sensor section name'});
   } if (!sensorMacAddress) {
     errorMessages.push({ 'sensorMacAddress': 'Must provide a sensor MAC address'});
-  } if (isSwitchedOn === null || !req.body.hasOwnProperty('isSwitchedOn')) {
+  } if (!isSwitchedOn) {
     errorMessages.push({ 'isSwitchedOn': 'Must provide a bolean value for switch'});
   } if (!washingMachineId) {
     errorMessages.push({ 'washingMachineId': 'Must provide a washing machine ID'});
