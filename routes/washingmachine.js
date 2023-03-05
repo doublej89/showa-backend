@@ -80,15 +80,6 @@ router.get('/:uid', async function(req, res, next) {
   }
 });
 
-router.delete('/', async function(req, res, next) {
-  try {
-    const wmachines = await WashingMachine.deleteMany();
-    res.status(200).json(wmachines);
-  } catch (error) {
-    res.status(422).json({ message: 'error', error: error.toString() })
-  }
-});
-
 router.get('/:uid/sensor', async function(req, res, next) {
   if (!req.params.uid) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
@@ -100,25 +91,33 @@ router.get('/:uid/sensor', async function(req, res, next) {
     for (const wm of wmachines) {
       allSensors.push(...wm.sensors);
     }
-    
-    res.status(200).json({ 
-      message: 'success', 
-      sensors: allSensors.map((sensor) => (
-        {
-          id: sensor._id,
-          washingMachineNickName: sensor.washingMachineNickName, 
-          sensorPurpose: sensor.sensorPurpose, 
-          sensorSectionName: sensor.sensorSectionName, 
-          sensorMacAddress: sensor.sensorMacAddress, 
-          isSwitchedOn: sensor.isSwitchedOn, 
-          washingMachineId: sensor.washingMachineId
-        }
-      )) 
-    });
+    res.status(200).json(
+      allSensors.map((sensor) => ({
+        id: sensor._id,
+        washingMachineNickName: sensor.washingMachineNickName, 
+        sensorPurpose: sensor.sensorPurpose, 
+        sensorSectionName: sensor.sensorSectionName, 
+        sensorMacAddress: sensor.sensorMacAddress, 
+        isSwitchedOn: sensor.isSwitchedOn, 
+        washingMachineId: sensor.washingMachineId
+      }))
+    );
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() });
   }
 });
+
+
+router.delete('/', async function(req, res, next) {
+  try {
+    const wmachines = await WashingMachine.deleteMany();
+    res.status(200).json(wmachines);
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() })
+  }
+});
+
+
 
 
 router.post('/sensor', async function(req, res, next) {
