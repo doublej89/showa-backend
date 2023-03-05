@@ -7,6 +7,7 @@ const WashingMachineSensorSchema = new mongoose.Schema(
         sensorSectionName: { type: String, required: true },
         sensorMacAddress: { type: String, required: true },
         isSwitchedOn: { type: Boolean, required: true },
+        uid: { type: String, required: true },
         washingMachineId: { type: String, required: true },
     },
     {
