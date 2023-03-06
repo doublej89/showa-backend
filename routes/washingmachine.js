@@ -85,13 +85,8 @@ router.get('/:uid/sensor', async function(req, res, next) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
   }
   try {
-    // const allSensors = [];
     const sensors = await WashingMachineSensor.find({ uid: req.params.uid });
 
-    // for (const wm of wmachines) {
-    //   const sensors = await WashingMachineSensor.find({ washingMachineId: wm._id });
-    //   allSensors.push(...sensors);
-    // }
     res.status(200).json(
       sensors.map((sensor) => ({
         id: sensor._id,
@@ -104,6 +99,7 @@ router.get('/:uid/sensor', async function(req, res, next) {
         uid: sensor.uid
       }))
     );
+
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() });
   }
@@ -131,10 +127,13 @@ router.post('/sensor', async function(req, res, next) {
     sensorSectionName, 
     sensorMacAddress, 
     isSwitchedOn, 
+    uid,
     washingMachineId
   } = req.body;
 
-  // if (!washingMachineNickName) {
+  // if (!uid) {
+  //   errorMessages.push({ 'uid': 'Must provide a uid of user'});
+  // } if (!washingMachineNickName) {
   //   errorMessages.push({ 'washingMachineNickName': 'Must provide a nick name for washing machine'});
   // } if (!sensorPurpose) {
   //   errorMessages.push({ 'sensorPurpose': 'Must provide a purpose for adding sensor'});
@@ -153,12 +152,13 @@ router.post('/sensor', async function(req, res, next) {
   // }
 
   try {
-    const wms = await WashingMachineSensor.create({ 
+    const wms = await WashingMachineSensor.create({
       washingMachineNickName, 
       sensorPurpose, 
       sensorSectionName, 
       sensorMacAddress, 
       isSwitchedOn, 
+      uid, 
       washingMachineId
     });
     res.status(200).json({ message: 'success', washingMachineSensor: wms });
