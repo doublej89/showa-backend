@@ -222,7 +222,7 @@ router.put('/sensor/temperature/:sensorId', async function(req, res, next) {
   try {
     const sensor = await WashingMachineSensor.findById(req.params.sensorId);
     const currentDay = new Date().getDay();
-    sensor.temperatureData[currentDay + ""] = Number(temperature);
+    sensor.temperatureData = {...sensor.temperatureData, [`${currentDay}`]: Number(temperature) };
     const updatedSensor = await sensor.save();
     res.status(200).json({ message: 'success', sensor: updatedSensor });
   } catch (error) {
