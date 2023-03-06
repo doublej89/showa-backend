@@ -115,6 +115,15 @@ router.delete('/', async function(req, res, next) {
   }
 });
 
+router.delete('/sensor', async function(req, res, next) {
+  try {
+    const wmachines = await WashingMachineSensor.deleteMany();
+    res.status(200).json(wmachines);
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() })
+  }
+});
+
 
 
 
