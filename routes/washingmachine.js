@@ -85,13 +85,8 @@ router.get('/:uid/sensor', async function(req, res, next) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
   }
   try {
-    const allSensors = [];
-    const wmachines = await WashingMachine.find({ uid: req.params.uid });
 
-    for (const wm of wmachines) {
-      const sensors = await WashingMachineSensor.find({ washingMachineId: wm._id });
-      allSensors.push(...sensors);
-    }
+    const allSensors = await washingMachineSensor.find({ uid: req.params.uid });
     res.status(200).json(
       allSensors.map((sensor) => ({
         id: sensor._id,
@@ -103,6 +98,7 @@ router.get('/:uid/sensor', async function(req, res, next) {
         washingMachineId: sensor.washingMachineId
       }))
     );
+
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() });
   }
@@ -130,34 +126,38 @@ router.post('/sensor', async function(req, res, next) {
     sensorSectionName, 
     sensorMacAddress, 
     isSwitchedOn, 
+    uid,
     washingMachineId
   } = req.body;
 
-  if (!washingMachineNickName) {
-    errorMessages.push({ 'washingMachineNickName': 'Must provide a nick name for washing machine'});
-  } if (!sensorPurpose) {
-    errorMessages.push({ 'sensorPurpose': 'Must provide a purpose for adding sensor'});
-  } if (!sensorSectionName) {
-    errorMessages.push({ 'sensorSectionName': 'Must provide a sensor section name'});
-  } if (!sensorMacAddress) {
-    errorMessages.push({ 'sensorMacAddress': 'Must provide a sensor MAC address'});
-  } if (!isSwitchedOn) {
-    errorMessages.push({ 'isSwitchedOn': 'Must provide a bolean value for switch'});
-  } if (!washingMachineId) {
-    errorMessages.push({ 'washingMachineId': 'Must provide a washing machine ID'});
-  } 
+  // if (!uid) {
+  //   errorMessages.push({ 'uid': 'Must provide a uid of user'});
+  // } if (!washingMachineNickName) {
+  //   errorMessages.push({ 'washingMachineNickName': 'Must provide a nick name for washing machine'});
+  // } if (!sensorPurpose) {
+  //   errorMessages.push({ 'sensorPurpose': 'Must provide a purpose for adding sensor'});
+  // } if (!sensorSectionName) {
+  //   errorMessages.push({ 'sensorSectionName': 'Must provide a sensor section name'});
+  // } if (!sensorMacAddress) {
+  //   errorMessages.push({ 'sensorMacAddress': 'Must provide a sensor MAC address'});
+  // } if (!isSwitchedOn) {
+  //   errorMessages.push({ 'isSwitchedOn': 'Must provide a bolean value for switch'});
+  // } if (!washingMachineId) {
+  //   errorMessages.push({ 'washingMachineId': 'Must provide a washing machine ID'});
+  // } 
 
-  if (errorMessages.length > 0) {
-    return res.status(420).json({ message: 'error', errorMessages });
-  }
+  // if (errorMessages.length > 0) {
+  //   return res.status(420).json({ message: 'error', errorMessages });
+  // }
 
   try {
-    const wms = await WashingMachineSensor.create({ 
+    const wms = await WashingMachineSensor.create({
       washingMachineNickName, 
       sensorPurpose, 
       sensorSectionName, 
       sensorMacAddress, 
       isSwitchedOn, 
+      uid, 
       washingMachineId
     });
     res.status(200).json({ message: 'success', washingMachineSensor: wms });
