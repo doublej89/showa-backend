@@ -166,16 +166,19 @@ router.post('/sensor', async function(req, res, next) {
   }
 });
 
-router.put('/:id/run', async function(req, res, next) {
+router.put('/:id/:status/change-status', async function(req, res, next) {
   if (!req.params.id) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine id' });
+  }
+  if (!req.params.status) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine status' });
   }
   try {
     const wm = await WashingMachine.findById(req.params.id);
     if (!wm) {
       return res.status(422).json({ message: 'error', errorMessage: 'Washing machine with the given id do not exist' });
     }
-    wm.status = 'Running';
+    wm.status = req.params.status;
     const newwm = await wm.save();
     res.status(200).json({ message: 'success', washingMachine: newwm });
   } catch (error) {
@@ -183,22 +186,6 @@ router.put('/:id/run', async function(req, res, next) {
   }
 })
 
-router.put('/:id/expire', async function(req, res, next) {
-  if (!req.params.id) {
-    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine id' });
-  }
-  try {
-    const wm = await WashingMachine.findById(req.params.id);
-    if (!wm) {
-      return res.status(422).json({ message: 'error', errorMessage: 'Washing machine with the given id do not exist' });
-    }
-    wm.status = 'Expired';
-    const newwm = await wm.save();
-    res.status(200).json({ message: 'success', washingMachine: newwm });
-  } catch (error) {
-    res.status(422).json({ message: 'error', error: error.toString() });
-  }
-})
 
 
 module.exports = router;
