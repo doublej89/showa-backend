@@ -159,7 +159,7 @@ router.post('/sensor', async function(req, res, next) {
   // if (errorMessages.length > 0) {
   //   return res.status(420).json({ message: 'error', errorMessages });
   // }
-
+  
   try {
     const wms = await WashingMachineSensor.create({
       washingMachineNickName, 
@@ -194,7 +194,41 @@ router.put('/:id/:status/change-status', async function(req, res, next) {
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() });
   }
-})
+});
+
+router.get('/:id/sensor/temperature', async function(req, res, next) {
+  if (!req.params.id) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine id' });
+  }
+  try {
+    const temperatures = [];
+    const sensors = await WashingMachineSensor.find({ washingMachineId: req.params.id });
+  
+    for (const sensor of sensors) {
+      temperatures.push(sensor.temperatureData);
+    }
+    res.status(200).json({ message: 'success', temperatures });
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() });
+  }
+});
+
+router.put('/sensor/temperature/:sensorId', async function(req, res, next) {
+  if (!req.params.sensorId) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a sensor id' });
+  }
+  const { temperature } = req.body;
+  
+  try {
+    const sensor = await WashingMachineSensor.findById(req.params.sensorId);
+    const currentDay = new Date().getDay();
+    sensor.temperatureData[currentDay + ""] = Number(temperature);
+    const updatedSensor = await sensor.save();
+    res.status(200).json({ message: 'success', sensor: updatedSensor });
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() });
+  }
+});
 
 
 
