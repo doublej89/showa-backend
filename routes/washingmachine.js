@@ -56,7 +56,7 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-router.get('/:uid', async function(req, res, next) {
+router.get('/user/:uid', async function(req, res, next) {
   if (!req.params.uid) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
   }
@@ -75,6 +75,21 @@ router.get('/:uid', async function(req, res, next) {
         status: wm.status
       }))
     );
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() })
+  }
+});
+
+router.get('/:id', async function(req, res, next) {
+  if (!req.params.id) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide an id' });
+  }
+  try {
+    const wm = await WashingMachine.findById(req.params.id);
+    if (!wm) {
+      return res.status(422).json({ message: 'error', errorMessage: 'Washing machine with the given id do not exist' });
+    }
+    res.status(200).json({ message: 'success', washingMachine: wm });
   } catch (error) {
     res.status(422).json({ message: 'error', error: error.toString() })
   }
