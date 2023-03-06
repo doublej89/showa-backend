@@ -121,6 +121,32 @@ router.get('/:uid/sensor', async function(req, res, next) {
 });
 
 
+router.get('/:wid/sensorByWid', async function(req, res, next) {
+  if (!req.params.wid) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine id' });
+  }
+  try {
+    const sensors = await WashingMachineSensor.find({ washingMachineId: req.params.wid });
+
+    res.status(200).json(
+      sensors.map((sensor) => ({
+        id: sensor._id,
+        washingMachineNickName: sensor.washingMachineNickName, 
+        sensorPurpose: sensor.sensorPurpose, 
+        sensorSectionName: sensor.sensorSectionName, 
+        sensorMacAddress: sensor.sensorMacAddress, 
+        isSwitchedOn: sensor.isSwitchedOn, 
+        washingMachineId: sensor.washingMachineId,
+        uid: sensor.uid
+      }))
+    );
+
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() });
+  }
+});
+
+
 router.delete('/', async function(req, res, next) {
   try {
     const wmachines = await WashingMachine.deleteMany();
@@ -244,6 +270,27 @@ router.put('/sensor/temperature/:sensorId', async function(req, res, next) {
     res.status(422).json({ message: 'error', error: error.toString() });
   }
 });
+
+
+router.put('/:washingMachineId/:washingMachineSensorId/assign-sensor', async function(req, res, next) {
+  if (!req.params.washingMachineId) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine id' });
+  }
+  if (!req.params.washingMachineSensorId) {
+    return res.status(422).json({ message: 'error', errorMessage: 'Must provide a washing machine sensor id' });
+  }
+  try {
+    const wms = await WashingMachineSensor.findById(req.params.washingMachineSensorId);
+    if (!wms) {
+      return res.status(422).json({ message: 'error', errorMessage: 'Washing machine sensor with the given id do not exist' });
+    }
+    wms.washingMachineId = req.params.washingMachineId;
+    const newwms = await wms.save();
+    res.status(200).json({ message: 'success', washingMachineSensor: newwms });
+  } catch (error) {
+    res.status(422).json({ message: 'error', error: error.toString() });
+  }
+})
 
 
 
