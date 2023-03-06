@@ -4,7 +4,7 @@ const WashingMachine = require('../models/WashingMachine');
 const WashingMachineSensor = require('../models/WashingMachineSensor');
 
 router.post('/', async function(req, res, next) {
-  const errorMessages = [];
+  // const errorMessages = [];
 
   const { 
     uid, 
@@ -17,27 +17,27 @@ router.post('/', async function(req, res, next) {
     status 
   } = req.body;
 
-  if (!uid) {
-    errorMessages.push({ 'uid': 'Must provide a user id'});
-  } if (!shopCompanyName) {
-    errorMessages.push({ 'shopCompanyName': 'Must provide a shop company name'});
-  } if (!typeOfShop) {
-    errorMessages.push({ 'typeOfShop': 'Must provide a shop type'});
-  } if (!address) {
-    errorMessages.push({ 'address': 'Must provide an address'});
-  } if (!typeOfWashingMachine) {
-    errorMessages.push({ 'typeOfWashingMachine': 'Must provide a washing machine type'});
-  } if (!brand) {
-    errorMessages.push({ 'brand': 'Must provide a brand'});
-  } if (!model) {
-    errorMessages.push({ 'model': 'Must provide a model'});
-  } if (!status) {
-    errorMessages.push({ 'status': 'Must provide status'});
-  }
+  // if (!uid) {
+  //   errorMessages.push({ 'uid': 'Must provide a user id'});
+  // } if (!shopCompanyName) {
+  //   errorMessages.push({ 'shopCompanyName': 'Must provide a shop company name'});
+  // } if (!typeOfShop) {
+  //   errorMessages.push({ 'typeOfShop': 'Must provide a shop type'});
+  // } if (!address) {
+  //   errorMessages.push({ 'address': 'Must provide an address'});
+  // } if (!typeOfWashingMachine) {
+  //   errorMessages.push({ 'typeOfWashingMachine': 'Must provide a washing machine type'});
+  // } if (!brand) {
+  //   errorMessages.push({ 'brand': 'Must provide a brand'});
+  // } if (!model) {
+  //   errorMessages.push({ 'model': 'Must provide a model'});
+  // } if (!status) {
+  //   errorMessages.push({ 'status': 'Must provide status'});
+  // }
 
-  if (errorMessages.length > 0) {
-    return res.status(420).json({ message: 'error', errorMessages });
-  }
+  // if (errorMessages.length > 0) {
+  //   return res.status(420).json({ message: 'error', errorMessages });
+  // }
 
   try {
     const wm = await WashingMachine.create({ 
@@ -85,17 +85,18 @@ router.get('/:uid/sensor', async function(req, res, next) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
   }
   try {
+    const sensors = await WashingMachineSensor.find({ uid: req.params.uid });
 
-    const allSensors = await washingMachineSensor.find({ uid: req.params.uid });
     res.status(200).json(
-      allSensors.map((sensor) => ({
+      sensors.map((sensor) => ({
         id: sensor._id,
         washingMachineNickName: sensor.washingMachineNickName, 
         sensorPurpose: sensor.sensorPurpose, 
         sensorSectionName: sensor.sensorSectionName, 
         sensorMacAddress: sensor.sensorMacAddress, 
         isSwitchedOn: sensor.isSwitchedOn, 
-        washingMachineId: sensor.washingMachineId
+        washingMachineId: sensor.washingMachineId,
+        uid: sensor.uid
       }))
     );
 
@@ -118,7 +119,7 @@ router.delete('/', async function(req, res, next) {
 
 
 router.post('/sensor', async function(req, res, next) {
-  const errorMessages = [];
+  // const errorMessages = [];
 
   const { 
     washingMachineNickName, 

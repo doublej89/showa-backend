@@ -2,13 +2,13 @@ const mongoose = require('mongoose')
 
 const WashingMachineSensorSchema = new mongoose.Schema(
     {
-        washingMachineNickName: {type: String, required: true },
-        sensorPurpose: { type: String, required: true },
-        sensorSectionName: { type: String, required: true },
-        sensorMacAddress: { type: String, required: true },
-        isSwitchedOn: { type: Boolean, required: true },
-        uid: { type: String, required: true },
-        washingMachineId: { type: String, required: true },
+        washingMachineNickName: {type: String, },
+        sensorPurpose: { type: String, },
+        sensorSectionName: { type: String, },
+        sensorMacAddress: { type: String, },
+        isSwitchedOn: { type: Boolean, },
+        uid: { type: String, },
+        washingMachineId: { type: String, },
     },
     {
         timestamps: true,
