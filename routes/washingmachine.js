@@ -17,27 +17,6 @@ router.post('/', async function(req, res, next) {
     status 
   } = req.body;
 
-  // if (!uid) {
-  //   errorMessages.push({ 'uid': 'Must provide a user id'});
-  // } if (!shopCompanyName) {
-  //   errorMessages.push({ 'shopCompanyName': 'Must provide a shop company name'});
-  // } if (!typeOfShop) {
-  //   errorMessages.push({ 'typeOfShop': 'Must provide a shop type'});
-  // } if (!address) {
-  //   errorMessages.push({ 'address': 'Must provide an address'});
-  // } if (!typeOfWashingMachine) {
-  //   errorMessages.push({ 'typeOfWashingMachine': 'Must provide a washing machine type'});
-  // } if (!brand) {
-  //   errorMessages.push({ 'brand': 'Must provide a brand'});
-  // } if (!model) {
-  //   errorMessages.push({ 'model': 'Must provide a model'});
-  // } if (!status) {
-  //   errorMessages.push({ 'status': 'Must provide status'});
-  // }
-
-  // if (errorMessages.length > 0) {
-  //   return res.status(420).json({ message: 'error', errorMessages });
-  // }
 
   try {
     const wm = await WashingMachine.create({ 
