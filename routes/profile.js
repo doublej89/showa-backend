@@ -8,7 +8,7 @@ router.get('/:uid', async function(req, res, next) {
       return res.status(422).json({ message: 'error', errorMessage: 'Must provide an user id' });
     }
     try {
-      const user = await User.findById(req.params.uid);
+      const user = await User.find({uid: req.params.uid});
       if (!user) {
         return res.status(422).json({ message: 'no-user-in-db', errorMessage: 'User with the given id do not exist' });
       }
