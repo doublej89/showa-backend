@@ -98,10 +98,11 @@ router.post('/add-user-without-image', async function(req, res, next) {
   
   
     try {
-      const user = await User.find({uid: uid});
+      const user = await User.findOne({uid: uid});
       if (!user) {
         return res.status(422).json({ message: 'error', errorMessage: 'User with the given id do not exist' });
       }
+
       user.postalCode = postalCode;
       user.prefecture = prefecture;
       user.cityAddress = cityAddress;
