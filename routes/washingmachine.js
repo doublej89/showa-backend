@@ -80,6 +80,7 @@ router.get('/:uid', async function(req, res, next) {
   }
 });
 
+
 router.get('/:uid/sensor', async function(req, res, next) {
   if (!req.params.uid) {
     return res.status(422).json({ message: 'error', errorMessage: 'Must provide a user id' });
