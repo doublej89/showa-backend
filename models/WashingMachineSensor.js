@@ -9,6 +9,10 @@ const WashingMachineSensorSchema = new mongoose.Schema(
         isSwitchedOn: { type: Boolean, },
         uid: { type: String, },
         washingMachineId: { type: String, },
+        temperatureData: {
+            type: mongoose.Schema.Types.Mixed,
+            default: { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }
+        }
     },
     {
         timestamps: true,
