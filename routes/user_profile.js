@@ -1,6 +1,29 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/User');
+const multer = require('multer');
+
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'assets/user_image');
+  },
+  filename: function (req, file, cb) {
+      cb(null, uuidv4() + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  if (allowedFileTypes.includes(file.mimetype)) {
+      cb(null, true);
+  } else {
+      cb(null, false);
+  }
+}
+
+let upload = multer({ storage, fileFilter });
 
 
 router.get('/:uid', async function(req, res, next) {
@@ -18,28 +41,10 @@ router.get('/:uid', async function(req, res, next) {
     }
   });
 
-router.get('/', async function(req, res, next) {
-  if (!req.query.phones) {
-    return res.status(422).json({ message: 'error', errorMessage: 'Must provide at least one phone number' });
-  }
-  try {
-    const phones = req.query.phones.split(',');
-    const usersByphone = [];
-    for (const phone of phones) {
-      const users = await User.find({ phone: { $regex: phone } });
-      if (users.length > 0) {
-        usersByphone.push(...users);
-      }
-    }
-    res.status(200).json({ message: 'success', usersByphone });
-  } catch (error) {
-    res.status(422).json({ message: 'error', error: error.toString() })
-  }
-});
 
 
 
-router.post('/add-user-without-image', async function(req, res, next) {
+  router.post('/add-user-without-image', async function(req, res, next) {
   
     const { 
         uid,
@@ -77,6 +82,58 @@ router.post('/add-user-without-image', async function(req, res, next) {
         dob,
         gender,
         photoAddress,
+        postalCode,
+        prefecture,
+        cityAddress,
+        streetAddress,
+        buildingNameRoomNumber,
+        occupation
+      });
+      res.status(200).json({ message: 'success', user: user });
+    } catch (error) {
+      res.status(422).json({ message: 'error', error: error.toString() })
+    }
+  });
+  
+  
+  router.route('/add-user-with-image').post(upload.single('image'), async function(req, res, next) {
+  
+    const { 
+        uid,
+        email,
+        phone,
+        firstNameAlphabet,
+        middleNameAlphabet,
+        lastNameAlphabet,
+        firstNameKanji,
+        middleNameKanji,
+        lastNameKanji,
+        dob,
+        gender,
+        photoAddress,
+        postalCode,
+        prefecture,
+        cityAddress,
+        streetAddress,
+        buildingNameRoomNumber,
+        occupation
+    } = req.body;
+  
+  
+    try {
+      const user = await User.create({ 
+        uid,
+        email,
+        phone,
+        firstNameAlphabet,
+        middleNameAlphabet,
+        lastNameAlphabet,
+        firstNameKanji,
+        middleNameKanji,
+        lastNameKanji,
+        dob,
+        gender,
+        photoAddress : "test address",
         postalCode,
         prefecture,
         cityAddress,
@@ -135,8 +192,6 @@ router.post('/add-user-without-image', async function(req, res, next) {
       res.status(422).json({ message: 'error', error: error.toString() });
     }
   });
-
-
   
 
 
