@@ -24,14 +24,14 @@ router.get('/', async function(req, res, next) {
     }
     try {
       const phones = req.query.phones.split(',');
-      const users = [];
+      const usersByphone = [];
       for (const phone of phones) {
-        const user = await User.findOne({ phone });
-        if (user) {
-          users.push(user);
+        const users = await User.find({ phone });
+        if (users.length > 0) {
+          usersByphone.push(...users);
         }
       }
-      res.status(200).json({ message: 'success', users });
+      res.status(200).json({ message: 'success', usersByphone });
     } catch (error) {
       res.status(422).json({ message: 'error', error: error.toString() })
     }
