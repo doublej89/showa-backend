@@ -16,7 +16,7 @@ router.get('/get-my-showa-contact', async function(req, res, next) {
           usersByphone.push(...users);
         }
       }
-      res.status(200).json({ message: 'success', user: usersByphone });
+      res.status(200).json({ message: 'success', users: usersByphone });
     } catch (error) {
       res.status(422).json({ message: 'error', error: error.toString() })
     }
