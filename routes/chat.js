@@ -8,7 +8,7 @@ router.get('/get-my-showa-contact/:phones', async function(req, res, next) {
     //   return res.status(422).json({ message: 'error', errorMessage: 'Must provide at least one phone number' });
     // }
     try {
-      const phones = req.query.phones.split(',');
+      const phones = req.params.phones.split(',');
       const usersByphone = [];
       for (const phone of phones) {
         const users = await User.find({ phone: { $regex: phone } });
