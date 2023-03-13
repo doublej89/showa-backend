@@ -18,6 +18,24 @@ router.get('/:uid', async function(req, res, next) {
     }
   });
 
+router.get('/', async function(req, res, next) {
+    if (!req.query.phones) {
+      return res.status(422).json({ message: 'error', errorMessage: 'Must provide at least one phone number' });
+    }
+    try {
+      const phones = req.query.phones.split(',');
+      const users = [];
+      for (const phone of phones) {
+        const user = await User.findOne({ phone });
+        if (user) {
+          users.push(user);
+        }
+      }
+      res.status(200).json({ message: 'success', users });
+    } catch (error) {
+      res.status(422).json({ message: 'error', error: error.toString() })
+    }
+  });
 
 
 
@@ -117,6 +135,8 @@ router.post('/add-user-without-image', async function(req, res, next) {
       res.status(422).json({ message: 'error', error: error.toString() });
     }
   });
+
+
   
 
 
