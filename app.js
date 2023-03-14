@@ -1,7 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
-var http = require("http");
-const cors = require("cors");
+
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -14,8 +13,6 @@ var chatRouter = require('./routes/chat');
 const mongoose = require('mongoose');
 
 var app = express();
-var server = http.createServer(app);
-var io = require("socket.io")(server);
 
 
 
@@ -38,7 +35,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/washing-machine', wmRouter);
@@ -61,11 +57,5 @@ app.use(function(req, res, next) {
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
-
-
-
-io.on("Connection", (socket) => {
-    console.log("connnected to socket server");
-});
 
 module.exports = app;
