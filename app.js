@@ -15,11 +15,7 @@ const mongoose = require('mongoose');
 
 var app = express();
 var server = http.createServer(app);
-var io = require("socket.io")(server,{
-    cors: {
-        origin:"*"
-    }
-});
+var io = require("socket.io")(server);
 
 
 
